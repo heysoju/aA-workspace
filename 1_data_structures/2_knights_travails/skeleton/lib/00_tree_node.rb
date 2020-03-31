@@ -11,7 +11,7 @@ class PolyTreeNode
     def parent=(parent)
         @parent.children.delete(self) unless @parent.nil?
         @parent = parent
-        parent.children << self unless parent.nil? || parent.children.include?(self)
+        @parent.children << self unless @parent.nil? || @parent.children.include?(self)
     end
 
     def add_child(child)
@@ -24,7 +24,7 @@ class PolyTreeNode
         if @children.include?(child)
             @children.delete(child)
         else
-            raise "Given child name is not a child of this node."
+            raise "Given child position is not a child of this node."
         end
     end
 
@@ -48,5 +48,20 @@ class PolyTreeNode
             end
         end
         nil
+    end
+
+    def print_children #Very important function that I created to test.
+        "Layer 1 Example"
+        result = @children.map { | child | child.value }
+        puts "#{result}"
+
+        "Layer 2 Example"
+        @children.each do | child | 
+            result2 = []
+            child.children.each do | c |
+                result2 << c.value
+            end
+            puts "#{child.value} children = #{result2}"
+        end
     end
 end
