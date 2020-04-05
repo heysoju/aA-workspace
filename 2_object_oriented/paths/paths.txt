@@ -1,0 +1,49 @@
+
+=================
+require_relative
+
+require looks in current directory when its called
+require_relative use current directory as a starting point to look for file.
+
+=================
+-I flag
+
+# animal-kit/lib/animal.rb
+class Animal
+  def initialize(name, species)
+    @name, @species = name, species
+  end
+
+  # ...
+end
+
+# animal-kit/lib/animal-kit.rb
+# a "meta file" that pulls in other `animal-kit` source files; the
+# user only needs to include this file to pull in everything else.
+require_relative "animal"
+require_relative "herbivore"
+require_relative "marsupial"
+
+# cat-tracker/lib/cat.rb
+# requires the Animal class from my animal-kit project
+require 'animal-kit' 
+
+class Cat < Animal
+  def initialize(name)
+    super(name, "Cattus Cattus")
+  end
+end
+
+When just starting out, we may not want to do this. Another way is to add 
+animal-kit/lib to the $LOAD_PATH. Then, when we require animal-kit, 
+Ruby will look in the animal-kit/lib directory.
+
+ruby -I animal-kit/lib cat-tracker/lib/animal.rb
+
+A convention with the -I flag is actually to leave no space between the 
+flag and the folder and so you may see the flag used like so:
+ruby -I./animal-kit/lib cat-tracker/lib/animal.rb
+
+=================
+LOAD
+load is there for convenience when developing and debugging in the REPL.
