@@ -46,6 +46,14 @@ class Board
             end
             puts render_row
         end
+        puts
+    end
+
+    def valid_moves(pos)
+        x, y = pos
+        puts
+        print @rows[x][y].get_moves
+        puts
     end
 
 
@@ -59,6 +67,11 @@ class Board
             raise "Error, there is a piece there." #Tentative, will change for capturing.
         end
 
+        piece_color = @rows[r1][c1].color
+        #for future reference save color before deleting
+        @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+        @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2,c2])
+
     end
 
 
@@ -67,6 +80,12 @@ end
 b = Board.new
 b.setup_board
 b.print_board
+b.move_piece([1,0], [2,0])
+b.print_board
+b.valid_moves([2,0])
+b.rows[3][1] = SlidingPiece.new(:white, b, [3,1])
+b.print_board
+b.valid_moves([2,0])
 #b.rows[0][0].get_moves
 #b.move_piece([0,0], [4,6])
 

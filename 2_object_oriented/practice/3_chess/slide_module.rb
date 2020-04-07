@@ -44,12 +44,36 @@ module Slideable
         possible_moves
     end
 
+    def top_center(pos)
+        #until row 0
+
+    end
+
+    def bottom_center(pos)
+        #until row 7
+    end
+
+
+    def left_center(pos)
+        #until col 0
+
+    end
+
+    def right_center(pos)
+        #until col 7
+
+    end
+
     def diagonal_moves(pos)
         top_left = top_left_diagonal(pos)
         top_right = top_right_diagonal(pos)
         bottom_left = bottom_left_diagonal(pos)
         bottom_right = bottom_right_diagonal(pos)
         [top_left, top_right, bottom_left, bottom_right]
+    end
+
+    def horizonal_vertical_moves(pos)
+
     end
 
 end
