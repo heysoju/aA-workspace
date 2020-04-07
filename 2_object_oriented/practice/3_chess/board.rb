@@ -12,17 +12,23 @@ class Board
         @rows = Array.new(8) { Array.new(8) }
     end
 
-    def setup_board
+    def setup_board #:white, :black
         valid_rows = [0, 1, 6, 7] #top two, top bottom are where pieces are set.
         @rows.each_with_index do | sub_arr, row_i |
             if valid_rows.include?(row_i)
                 sub_arr.each_with_index do | _, col_i |
-                    @rows[row_i][col_i] = Piece.new("color", self, [row_i, col_i])
+                    if row_i == 0 || row_i == 1
+                        @rows[row_i][col_i] = SlidingPiece.new(:black, self, [row_i, col_i])
+                    elsif row_i == 6 || row_i == 7
+                        @rows[row_i][col_i] = SlidingPiece.new(:white, self, [row_i, col_i])
+                    end
                 end
+
             else
                 sub_arr.each_with_index do | _, col_i |
-                    @rows[row_i][col_i] = NullPiece.new("color", self, [row_i, col_i])
+                    @rows[row_i][col_i] = NullPiece.new(:color, self, [row_i, col_i])
                 end
+
             end
         end
     end
@@ -31,7 +37,11 @@ class Board
         @rows.each do | sub_arr |
             render_row = ""
             sub_arr.each do | piece |
-                piece.is_a?(NullPiece) ? render_row += "?" : render_row += "."
+                if piece.is_a?(NullPiece)
+                    render_row += "."
+                else
+                    piece.color == :white ? render_row += "w" : render_row += "b"
+                end
                 render_row += " "
             end
             puts render_row
@@ -57,4 +67,6 @@ end
 b = Board.new
 b.setup_board
 b.print_board
-b.move_piece([0,0], [4,6])
+#b.rows[0][0].get_moves
+#b.move_piece([0,0], [4,6])
+

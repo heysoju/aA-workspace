@@ -1,65 +1,33 @@
 require_relative "piece"
-
-module Slideable
-
-    def top_left_diagonal(pos)
-        possible_moves = []
-        x, y = pos
-        until x <= 0 || y <= 0
-            possible_moves << [x - 1, y - 1] if x - 1 >= 0 && y - 1 >= 0
-            x -= 1
-            y -= 1
-        end
-        possible_moves
-    end
-
-    def top_right_diagonal(pos)
-        possible_moves = []
-        x, y = pos
-        until x <= 0 || y >= 7
-            possible_moves << [x - 1, y + 1] if x - 1 >= 0 && y + 1 <= 7
-            x -= 1
-            y += 1
-        end
-        possible_moves
-    end
-
-    def bottom_left_diagonal(pos)
-        possible_moves = []
-        x, y = pos
-        until x >= 7 || y <= 0
-            possible_moves << [x + 1, y - 1] if x + 1 <= 7 && y - 1 >= 0
-            x += 1
-            y -= 1
-        end
-        possible_moves
-    end
-
-    def bottom_right_diagonal(pos)
-        possible_moves = []
-        x, y = pos
-        until x >= 7 || y >= 7
-            possible_moves << [x + 1, y + 1] if x + 1 <= 7 && y + 1 <= 7
-            x += 1
-            y += 1
-        end
-        possible_moves
-    end
-
-    
-
-    
-
-
-
-    def top_right_diagonal()
-    
-end
+require_relative "slide_module"
 
 class SlidingPiece < Piece
+
+    include Slideable
 
     def initialize(color, board, pos)
         super
     end
 
+    def not_null?(pos)
+        x, y = pos
+        !@board.rows[x][y].is_a?(NullPiece) && @board.rows[x][y].is_a?(Piece)
+    end
+
+    def get_moves
+        tl, tr, bl, br = diagonal_moves(@pos)
+        print tl
+        puts
+        print tr
+        puts
+        print bl
+        puts
+        print br
+        puts
+        #puts not_null?([0,1])
+    end
+
 end
+
+#s = SlidingPiece.new(:white, [], [3,3])
+#s.get_moves
