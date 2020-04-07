@@ -13,15 +13,15 @@ class Board
     end
 
     def setup_board
-        valid_rows = [0, 1, 6, 7]
-        @rows.each_with_index do | sub_arr, row_idx |
-            if valid_rows.include?(row_idx)
-                sub_arr.each_with_index do | piece, col_idx |
-                    @rows[row_idx][col_idx] = Piece.new("color", self, [row_idx, col_idx])
+        valid_rows = [0, 1, 6, 7] #top two, top bottom are where pieces are set.
+        @rows.each_with_index do | sub_arr, row_i |
+            if valid_rows.include?(row_i)
+                sub_arr.each_with_index do | _, col_i |
+                    @rows[row_i][col_i] = Piece.new("color", self, [row_i, col_i])
                 end
             else
-                sub_arr.each_with_index do | piece, col_idx |
-                    @rows[row_idx][col_idx] = NullPiece.new("color", self, [row_idx, col_idx])
+                sub_arr.each_with_index do | _, col_i |
+                    @rows[row_i][col_i] = NullPiece.new("color", self, [row_i, col_i])
                 end
             end
         end
@@ -38,6 +38,7 @@ class Board
         end
     end
 
+
     def move_piece(start_pos, end_pos)
         r1, c1 = start_pos
         r2, c2 = end_pos
@@ -47,6 +48,7 @@ class Board
         elsif @rows[r2][c2].is_a?(Piece) && !@rows[r2][c2].is_a?(NullPiece) #specify error on null cause null derives from piece
             raise "Error, there is a piece there." #Tentative, will change for capturing.
         end
+
     end
 
 
@@ -55,5 +57,4 @@ end
 b = Board.new
 b.setup_board
 b.print_board
-b.move_piece([0,0], [0,0])
-
+b.move_piece([0,0], [4,6])

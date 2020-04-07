@@ -1,7 +1,11 @@
 require_relative "piece"
 
-class SteppingPiece < Piece
+module Stepable
     
+end
+
+class SteppingPiece < Piece
+
     def initialize(color, board, pos)
         super
     end
