@@ -1,21 +1,15 @@
 module Stepable
 
-    #   Knight movement
-    #       (-1, -2)    (-1, +2)
-    #     *[3, 2]    *[3, 6]
-    #           *[4,4]
-    #     *[5, 2]    *[5, 6]
-    #       (+1, -2)     (+1, +2)
-    #
+    def knight_moves(pos)
+        x, y = pos
+        directions = [[-1, -2], [-1, 2], [1, -2], [1, 2]]
+        directions.map { | move | [move[0] + x, move[1] + y] }
+    end
 
-    # King All Directions
-    #
-    #       (-1, -1) (-1, 0) (-1, 1)
-    #       (0, -1)   king   (0, 1)
-    #       (1, -1)  (1, 0)  (1, 1)
-    #
-
-    
-
+    def king_moves(pos)
+        x, y = pos
+        directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+        directions.map { | move | [move[0] + x, move[1] + y] }
+    end
 
 end

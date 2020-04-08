@@ -12,31 +12,33 @@ class Board
         @rows = Array.new(8) { Array.new(8) }
     end
 
-    def setup_board #:white, :black
-        valid_rows = [0, 1, 6, 7] #top two, top bottom are where pieces are set.
+    def set_pieces(row_i, col_i)
+        #TODO: Differentiate all pieces at the end
+        if row_i == 0 || row_i == 1
+            @rows[row_i][col_i] = SlidingPiece.new(:black, self, [row_i, col_i])
+            @rows[row_i][col_i].set_symbol(:queen)
+        elsif row_i == 6 || row_i == 7
+            @rows[row_i][col_i] = SlidingPiece.new(:white, self, [row_i, col_i])
+            @rows[row_i][col_i].set_symbol(:queen)
+        end
+    end
+
+    def set_null(row_i, col_i)
+        @rows[row_i][col_i] = NullPiece.new(:color, self, [row_i, col_i])
+    end
+
+    def setup_board
+        valid_rows = [0, 1, 6, 7]
         @rows.each_with_index do | sub_arr, row_i |
             if valid_rows.include?(row_i)
-                sub_arr.each_with_index do | _, col_i |
-                    if row_i == 0 || row_i == 1
-                        @rows[row_i][col_i] = SlidingPiece.new(:black, self, [row_i, col_i])
-                        @rows[row_i][col_i].set_symbol(:queen)
-                    elsif row_i == 6 || row_i == 7
-                        @rows[row_i][col_i] = SlidingPiece.new(:white, self, [row_i, col_i])
-                        @rows[row_i][col_i].set_symbol(:queen)
-                    end
-                end
-
+                sub_arr.each_with_index { | _, col_i | set_pieces(row_i, col_i) }
             else
-                sub_arr.each_with_index do | _, col_i |
-                    @rows[row_i][col_i] = NullPiece.new(:color, self, [row_i, col_i])
-                end
-
+                sub_arr.each_with_index { | _, col_i | set_null(row_i, col_i) }
             end
         end
     end
 
     def print_board
-        puts
         @rows.each do | sub_arr |
             render_row = ""
             sub_arr.each do | piece |
@@ -70,12 +72,11 @@ class Board
             raise "Error, there is a piece there." #Tentative, will change for capturing.
         end
 
-        
         piece_color = @rows[r1][c1].color
+        piece_type = @rows[r1][c1].symbol
         @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-
         @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2,c2])
-        @rows[r2][c2].set_symbol(:queen)
+        @rows[r2][c2].set_symbol(piece_type)
 
 
         #NEED TO CALL VALID DIRECTIONS BEFORE MAKING MOVE

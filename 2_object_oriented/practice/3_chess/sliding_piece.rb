@@ -5,11 +5,8 @@ class SlidingPiece < Piece
 
     include Slideable
 
-    attr_accessor :symbol
-
     def initialize(color, board, pos)
         super
-        @symbol = nil #:queen, :rook, :bishop 
     end
 
     def set_symbol(s)
@@ -36,7 +33,6 @@ class SlidingPiece < Piece
     end
 
     def get_moves
-        puts @symbol
         valid = []
         case @symbol
         when :bishop
