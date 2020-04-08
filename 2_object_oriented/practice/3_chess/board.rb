@@ -19,8 +19,10 @@ class Board
                 sub_arr.each_with_index do | _, col_i |
                     if row_i == 0 || row_i == 1
                         @rows[row_i][col_i] = SlidingPiece.new(:black, self, [row_i, col_i])
+                        @rows[row_i][col_i].set_symbol(:queen)
                     elsif row_i == 6 || row_i == 7
                         @rows[row_i][col_i] = SlidingPiece.new(:white, self, [row_i, col_i])
+                        @rows[row_i][col_i].set_symbol(:queen)
                     end
                 end
 
@@ -34,6 +36,7 @@ class Board
     end
 
     def print_board
+        puts
         @rows.each do | sub_arr |
             render_row = ""
             sub_arr.each do | piece |
@@ -67,10 +70,16 @@ class Board
             raise "Error, there is a piece there." #Tentative, will change for capturing.
         end
 
+        
         piece_color = @rows[r1][c1].color
-        #for future reference save color before deleting
         @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+
         @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2,c2])
+        @rows[r2][c2].set_symbol(:queen)
+
+
+        #NEED TO CALL VALID DIRECTIONS BEFORE MAKING MOVE
+
 
     end
 
@@ -83,9 +92,10 @@ b.print_board
 b.move_piece([1,0], [2,0])
 b.print_board
 b.valid_moves([2,0])
-b.rows[3][1] = SlidingPiece.new(:white, b, [3,1])
+b.rows[3][0] = SlidingPiece.new(:white, b, [3,0])
 b.print_board
 b.valid_moves([2,0])
+
 #b.rows[0][0].get_moves
 #b.move_piece([0,0], [4,6])
 
