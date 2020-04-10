@@ -64,7 +64,6 @@ module Slideable
         possible_moves
     end
 
-
     def center_left(pos)
         possible_moves = []
         x, y = pos

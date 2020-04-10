@@ -15,11 +15,11 @@ class Board
     def set_pieces(row_i, col_i)
         #TODO: Differentiate all pieces at the end
         if row_i == 0 || row_i == 1
-            @rows[row_i][col_i] = SlidingPiece.new(:black, self, [row_i, col_i])
-            @rows[row_i][col_i].set_symbol(:queen)
+            @rows[row_i][col_i] = Pawn.new(:black, self, [row_i, col_i])
+            @rows[row_i][col_i].set_symbol(:pawn)
         elsif row_i == 6 || row_i == 7
-            @rows[row_i][col_i] = SlidingPiece.new(:white, self, [row_i, col_i])
-            @rows[row_i][col_i].set_symbol(:queen)
+            @rows[row_i][col_i] = Pawn.new(:white, self, [row_i, col_i])
+            @rows[row_i][col_i].set_symbol(:pawn)
         end
     end
 
@@ -72,10 +72,12 @@ class Board
             raise "Error, there is a piece there." #Tentative, will change for capturing.
         end
 
+
+        # doesnt move tovalid moves yet, just moves.
         piece_color = @rows[r1][c1].color
         piece_type = @rows[r1][c1].symbol
         @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-        @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2,c2])
+        @rows[r2][c2] = Pawn.new(piece_color, self, [r2,c2])
         @rows[r2][c2].set_symbol(piece_type)
 
 
@@ -90,12 +92,21 @@ end
 b = Board.new
 b.setup_board
 b.print_board
-b.move_piece([1,0], [2,0])
+b.move_piece([1,3], [2,3])
+b.rows[3][2] = Pawn.new(:black, b, [3,2])
 b.print_board
-b.valid_moves([2,0])
-b.rows[3][0] = SlidingPiece.new(:white, b, [3,0])
+b.valid_moves([2,3])
+
+#test
+b.rows[3][3] = Pawn.new(:white, b, [3,3])
+b.rows[3][4] = Pawn.new(:white, b, [3,4])
+b.rows[3][2].set_symbol(:pawn)
+b.rows[3][3].set_symbol(:pawn)
+b.rows[3][4].set_symbol(:pawn)
+
+
 b.print_board
-b.valid_moves([2,0])
+b.valid_moves([2,3])
 
 #b.rows[0][0].get_moves
 #b.move_piece([0,0], [4,6])
