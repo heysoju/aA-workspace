@@ -1,5 +1,12 @@
 module Slideable
 
+    #Each direction function results in an array of positions that are
+    #ordered in the positions found starting at current pos towards that direction.
+    #This is to make it easier to find roadblocks in the future and create breaks when
+    #looping through the array in future when determining valid moves. These are all
+    #the possible positions in the directions and must be trimmed down later in the
+    #get_moves functions to determine correct moves for the pieces.
+
     def top_left_diagonal(pos)
         possible_moves = []
         x, y = pos

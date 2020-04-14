@@ -61,7 +61,6 @@ class Board
                 row == 0 ? set_kings(row, col, :black) : set_kings(row, col, :white)
             end
         end
-
     end
 
     def set_null(row, col)
@@ -81,7 +80,12 @@ class Board
 
     def piece?(pos)
         x, y = pos
-        @board.rows[x][y].is_a?(Piece) && !@board.rows[x][y].is_a?(NullPiece)
+        @rows[x][y].is_a?(Piece) && !@rows[x][y].is_a?(NullPiece)
+    end
+
+    def opposite_color?(pos)
+        x, y = pos
+        @board.rows[x][y].color != @color
     end
 
     def check(pos)
@@ -96,20 +100,14 @@ class Board
         false
     end
 
-    def checkmate?(color)
-
-        king = nil
-        @rows.each do | row |
-            row.each do | piece |
-                king = piece if piece.symbol == :king && piece.color != color
-            end
-        end
+    def checkmate?(king)
 
         valid = []
         unvalid = []
 
         moves = king.get_moves
 
+        #Step 1
         unless moves.empty?
             moves.each do | move |
                 if check?(move) #if one piece can check u, u cant do this if u take
@@ -121,21 +119,18 @@ class Board
         end
 
 
+        #You Can't Go To This Step If There are more than 1 pieces checking you.
+        #If there are two pieces checking you and you have no VALID moves, you cant escape, its over.
 
+        #Step 2
         #Now we gotta fuckin check if theres a possible move that can kill the piece thats checking u
         if valid.empty?
             unvalid.each do | move |
                 #HERE we gonna try and find anything that can kill its ass
-
             end
-
         end
 
         return true #if we exhaust all our options, then yeah we conclude checkmate
-
-
-        
-
 
 
 
@@ -152,8 +147,10 @@ class Board
     end
 
     def print_board
-        @rows.each do | sub_arr |
-            render_row = ""
+        puts "   0   1   2   3   4   5   6   7 "
+        puts "---------------------------------"
+        @rows.each_with_index do | sub_arr, idx |
+            render_row = "#{idx}  "
             sub_arr.each do | piece |
                 if piece.is_a?(NullPiece)
                     render_row += ". "
@@ -213,10 +210,7 @@ class Board
         when :knight, :king
             @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
         end
-
         @rows[r2][c2].set_symbol(piece_type)
-
-
         print_board
 
 
