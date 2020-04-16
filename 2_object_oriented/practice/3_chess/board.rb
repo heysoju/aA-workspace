@@ -6,10 +6,24 @@ require_relative "pawns"
 
 class Board
 
-    attr_accessor :rows
+    attr_accessor :rows, :moves_list
 
     def initialize
         @rows = Array.new(8) { Array.new(8) }
+        @moves_list = []
+    end
+
+    def copy
+        dup_board = Board.new()
+        dup_board.setup_board
+        dup_board.simulate(@moves_list)
+        dup_board
+    end
+
+    def simulate(moves_list)
+        moves_list.each do | start, dest = sub_arr |
+            move_piece(start, dest)
+        end
     end
 
     def set_pawns(row, col)
@@ -42,7 +56,6 @@ class Board
         @rows[row][col] = SteppingPiece.new(color, self, [row, col])
         @rows[row][col].set_symbol(:king)
     end
-
 
     def set_pieces(row, col)
         if row == 1 || row == 6
@@ -89,61 +102,67 @@ class Board
     end
 
     def check(pos)
+
         @rows.each do | row |
             row.each do | piece |
                 if piece?(piece.pos)
                     return true if piece.get_moves.include?(pos)
                 end
             end
-
         end
         false
     end
 
-    def checkmate?(king)
+    def check_king_exits(king)
 
+        #possible exits works even with 2 checks if u can catch one of them at least
+        #still need to check if theres no possible moves, and if so, check to see if
+        #any of ur pieces can capture existing pieces.
         valid = []
-        unvalid = []
+        invalid = []
 
         moves = king.get_moves
+        moves.each_with_index do | move, idx |
+            
+            puts "Possible Valid/Unvalid Move #{idx + 1}"
+            dup_board = copy
+            dup_piece = king.copy_king(king.color, dup_board, move, king.symbol)
 
-        #Step 1
-        unless moves.empty?
-            moves.each do | move |
-                if check?(move) #if one piece can check u, u cant do this if u take
-                    unvalid << move
-                else
-                    valid << move
-                end
-            end
+            r1, c1 = king.pos
+            r2, c2 = move
+
+            dup_board.rows[r2][c2] = dup_piece
+            dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+
+            dup_board.check(move) ? invalid << move : valid << move
+            dup_board.print_board
         end
+        [valid, invalid]
+    end
+
+    def checkmate?(king)
+        valid_action, invalid_action = check_king_exits(king)
+        puts "Valid: #{valid_action}"
+        puts "Invalid: #{invalid_action}"
 
 
-        #You Can't Go To This Step If There are more than 1 pieces checking you.
-        #If there are two pieces checking you and you have no VALID moves, you cant escape, its over.
+        # #You Can't Go To This Step If There are more than 1 pieces checking you.
+        # #If there are two pieces checking you and you have no VALID moves, you cant escape, its over.
 
-        #Step 2
-        #Now we gotta fuckin check if theres a possible move that can kill the piece thats checking u
-        if valid.empty?
-            unvalid.each do | move |
-                #HERE we gonna try and find anything that can kill its ass
-            end
-        end
+        # #Step 2
+        # #Now we gotta fuckin check if theres a possible move that can kill the piece thats checking u
+        # if valid.empty?
+        #     unvalid.each do | move |
+        #         #HERE we gonna try and find anything that can kill its ass WHILE ALSO
+        #         #making sure that if they move, it will not cause the king to be checked
+        #         #from another position
+        #     end
+        # end
 
-        return true #if we exhaust all our options, then yeah we conclude checkmate
+        # return true #if we exhaust all our options, then yeah we conclude checkmate
 
 
 
-        #Check all adjacent pieces
-            #if the are opposite color, if you take will u be in check?
-                    #if so thats not valid
-            #if the are opposite color, if you take and not in check, not mated yet.
-        #if all valid moves for opponent king is [], then thats one set of checks done
-
-        #then check for any surrounding moves that can prevent checkmate for that color
-        #search all pieces of that kings color and see if the coordinate where the
-        #piece is causing the check can be killed. if no pieces can kill that position
-        #then its official checkmate.
     end
 
     def print_board
@@ -188,6 +207,7 @@ class Board
     end
 
     def move_piece(start_pos, end_pos)
+        moves_list << [start_pos, end_pos]
         r1, c1 = start_pos
         r2, c2 = end_pos
 
@@ -211,7 +231,7 @@ class Board
             @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
         end
         @rows[r2][c2].set_symbol(piece_type)
-        print_board
+        #print_board
 
 
     end

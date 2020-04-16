@@ -11,32 +11,55 @@ class Game
     def get_kings
         white_position = []
         black_position = []
-        @board.each do | rows |
-            rows.each do | pieces |
+        @board.rows.each do | row |
+            row.each do | piece |
                 if piece.symbol == :king && piece.color == :white
-                    white_position = piece.pos
-                elsif piece.symbol == :king && piece.color == :black_king
-                    black_position = piece.pos
+                    white_position = piece
+                elsif piece.symbol == :king && piece.color == :black
+                    black_position = piece
                 end
             end
         end
         [white_position, black_position]
     end
 
+    def simulation_1
+        simulate_intro = [
+            [[1,3], [2,3]], 
+            [[2,3], [3,3]], 
+            [[6,3], [5,3]], 
+            [[5,3], [4,3]],
+
+            [[0,3], [2,3]],
+            [[2,3], [4,1]],
+            [[4,1], [4,3]],
+            [[4,3], [7,3]],
+            [[6,5], [5,5]],
+            [[0,2], [5,6]]
+        ]
+
+        simulate_intro.each do | start, dest = sub_arr |
+            @board.move_piece(start, dest)
+        end
+
+    end
+
     def play
 
+        simulation_1
         while true
-
 
             #gotta change to simply keep updating and finding the kings locations
             #in order to keep checking.
-            white_king, black_king = get_kings
-      
-            if @board.check(white_king)
+            white_king, black_king = self.get_kings
+    
+            if @board.check(white_king.pos)
                 puts "White king in check"
+                @board.checkmate?(white_king)
             end
-            if @board.check(black_king)
+            if @board.check(black_king.pos)
                 puts "Black king in check"
+                @board.checkmate?(black_king)
             end
 
             puts "Please choose a piece to move: "
