@@ -44,9 +44,34 @@ class Game
 
     end
 
+    def simulation_2
+        #There dont move validly.
+        simulate_intro = [
+            [[1,3], [2,3]], 
+            [[2,3], [3,3]], 
+            [[6,3], [5,3]], 
+            [[5,3], [4,3]],
+
+            [[0,3], [2,3]],
+            [[2,3], [4,1]],
+            [[4,1], [4,3]],
+            [[4,3], [7,3]],
+            [[6,5], [5,5]],
+            [[0,2], [5,6]],
+            [[0,1], [5,4]]
+        ]
+
+        simulate_intro.each do | start, dest = sub_arr |
+            @board.move_piece(start, dest)
+        end
+
+    end
+
+
+
     def play
 
-        simulation_1
+        simulation_2
         while true
 
             #gotta change to simply keep updating and finding the kings locations

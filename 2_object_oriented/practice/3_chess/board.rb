@@ -102,7 +102,6 @@ class Board
     end
 
     def check(pos)
-
         @rows.each do | row |
             row.each do | piece |
                 if piece?(piece.pos)
@@ -117,14 +116,14 @@ class Board
 
         #possible exits works even with 2 checks if u can catch one of them at least
         #still need to check if theres no possible moves, and if so, check to see if
-        #any of ur pieces can capture existing pieces.
+        #any of ur pieces can capture existing pieces that are invalid array
         valid = []
         invalid = []
 
         moves = king.get_moves
         moves.each_with_index do | move, idx |
             
-            puts "Possible Valid/Unvalid Move #{idx + 1}"
+            #puts "Possible Valid/Unvalid Move #{idx + 1}"
             dup_board = copy
             dup_piece = king.copy_king(king.color, dup_board, move, king.symbol)
 
@@ -135,9 +134,47 @@ class Board
             dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
 
             dup_board.check(move) ? invalid << move : valid << move
-            dup_board.print_board
+            #dup_board.print_board
         end
         [valid, invalid]
+    end
+
+    def check_king_rescue(invalid_moves, king)
+
+        checking_pieces = []
+
+        @rows.each do | row |
+            row.each do | piece |
+                checking_pieces << piece if piece?(piece.pos) && piece.get_moves.include?(king.pos)
+            end
+        end
+
+        viable_moves = []
+
+        #if amount of pieces checking you == 2 or higher AND valid is empty
+        # simply return checkmated.
+        if checking_pieces.length > 1
+            puts "Checkmated"
+
+        #if amount of pieces checking you == 1
+        # simply see if any of ur other pieces can kill OFF that piece
+        # if so, then u are not checkmated.
+        else
+            to_kill = checking_pieces.pop
+            @rows.each do | row |
+                row.each do | piece |
+                    if piece.color == king.color
+                        viable_moves << piece if piece?(piece.pos) && piece.get_moves.include?(to_kill.pos)
+                    end
+                end
+            end
+        end
+
+        if viable_moves.empty?
+            puts "Checkmated"
+        else
+            puts "Not yet checkmated, possible moves: #{viable_moves}"
+        end
     end
 
     def checkmate?(king)
@@ -145,24 +182,14 @@ class Board
         puts "Valid: #{valid_action}"
         puts "Invalid: #{invalid_action}"
 
-
-        # #You Can't Go To This Step If There are more than 1 pieces checking you.
-        # #If there are two pieces checking you and you have no VALID moves, you cant escape, its over.
-
-        # #Step 2
-        # #Now we gotta fuckin check if theres a possible move that can kill the piece thats checking u
-        # if valid.empty?
-        #     unvalid.each do | move |
-        #         #HERE we gonna try and find anything that can kill its ass WHILE ALSO
-        #         #making sure that if they move, it will not cause the king to be checked
-        #         #from another position
-        #     end
-        # end
-
-        # return true #if we exhaust all our options, then yeah we conclude checkmate
+        if valid_action.empty?
+            check_king_rescue(invalid_action, king)
+        else
+            puts "Not yet checkmated, possible moves: #{valid_action}"
+        end
 
 
-
+        print_board
     end
 
     def print_board
@@ -231,33 +258,9 @@ class Board
             @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
         end
         @rows[r2][c2].set_symbol(piece_type)
+
+        #-----Testing Here-----
         #print_board
 
-
     end
-
-
 end
-
-#b = Board.new
-#b.setup_board
-#b.print_board
-
-# b.move_piece([1,3], [2,3])
-# b.rows[3][2] = Pawn.new(:black, b, [3,2])
-# b.print_board
-# b.valid_move?([2,3])
-
-# #test
-# b.rows[3][3] = Pawn.new(:white, b, [3,3])
-# b.rows[3][4] = Pawn.new(:white, b, [3,4])
-# b.rows[3][2].set_symbol(:pawn)
-# b.rows[3][3].set_symbol(:pawn)
-# b.rows[3][4].set_symbol(:pawn)
-
-
-# b.print_board
-# b.valid_move?([3,4])
-
-#b.rows[0][0].get_moves
-#b.move_piece([0,0], [4,6])
